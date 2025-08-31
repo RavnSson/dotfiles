@@ -117,61 +117,123 @@ if ! shopt -oq posix; then
 fi
 alias godot='flatpak run org.godotengine.Godot'
 
-# --- Prompt estilo CodexSyn (verde) ---
+# --- Prompt estilo CodexSyn (reactivo) ---
 csyn_git_branch() { git branch --show-current 2>/dev/null; }
 
 csyn_set_prompt() {
-  local grn="\[\e[1;32m\]" # verde brillante (identidad)
-  local wht="\[\e[0;37m\]" # gris/blanco tenue (neutral)
-  local mag="\[\e[1;35m\]" # magenta fuerte (rama git / glitch)
+  local last_status=$?   # <-- capturamos aquí ANTES de nada
+
+  local grn="\[\e[1;32m\]" # verde
+  local red="\[\e[1;31m\]" # rojo
+  local wht="\[\e[0;37m\]" # gris/blanco tenue
+  local mag="\[\e[1;35m\]" # magenta glitch (rama git)
   local rst="\[\e[0m\]"
 
+  local base sep_color
+  if [ $last_status -eq 0 ]; then
+    base=$grn
+    sep_color="\e[0;32m"   # verde
+  else
+    base=$red
+    sep_color="\e[0;31m"   # rojo
+  fi
+
+  # separador dinámico (según estado)
+  printf "${sep_color}===============\e[0m\n"
+
+  # rama git si existe
   local branch="$(csyn_git_branch)"
   if [ -n "$branch" ]; then
-    PS1="${grn}CodexSyn⚝${wht}\w ${mag}(${branch})${grn}>\ ${rst}"
+    PS1="${base}CodexSyn⚝${wht}\w ${mag}(${branch})${base}>\ ${rst}"
   else
-    PS1="${grn}CodexSyn⚝~${wht}\w${grn}>\ ${rst}"
+    PS1="${base}CodexSyn⚝${wht}\w${base}>\ ${rst}"
   fi
 }
 
-# --- Separador verde antes de cada prompt ---
-precmd_codemark() {
-  printf '\e[1;32m====================\e[0m\n'
+PROMPT_COMMAND=csyn_set_prompt
+
+# --- Función efecto máquina de escribir con soporte de color ---
+typeprint () {
+  local text="$1"
+  local delay="${2:-0.03}" # velocidad por caracter
+  local color="$3"         # color ANSI opcional, ej: "\e[1;35m"
+  
+  printf "$color"
+  while IFS= read -r -n1 char; do
+    printf "%s" "$char"
+    sleep "$delay"
+  done <<< "$text"
+  printf "\e[0m\n" # reset al final
 }
 
-# Integrar ambas funciones en PROMPT_COMMAND
-PROMPT_COMMAND='precmd_codemark; csyn_set_prompt'
+# --- Figlet + typewriter (línea por línea, sin deformar) ---
+figlet_typewriter () {
+  local text="$1"
+  local delay="${2:-0.1}"       # 0.1 seg por línea (ajusta a tu gusto)
+  local color="${3:-\e[1;32m}"  # verde CRT por defecto
 
-# --- Intro estilo Lain + CodexSyn ⚝ (banner + frase aleatoria) ---
+  if ! command -v figlet >/dev/null 2>&1; then
+    # Fallback si no está figlet
+    typeprint "$text" 0.05 "$color"
+    return
+  fi
+
+  # Genera el ASCII con figlet
+  local output
+  output="$(figlet -f standard -- "$text")" || {
+    typeprint "$text" 0.05 "$color"
+    return
+  }
+
+  # Imprime línea por línea con retraso
+  printf "%b" "$color"
+  while IFS= read -r line; do
+    echo "$line"
+    sleep "$delay"
+  done <<< "$output"
+  printf "\e[0m"
+}
+
+# --- Intro minimal CodexSyn ⚝ ---
 intro_codexsyn() {
-  # Mensaje inicial (magenta glitch)
-  echo -e "\e[1;35mPresent day...\e[0m"
+  # Colores
+  local MAG="\e[1;35m"  # magenta glitch
+  local GRN="\e[1;32m"  # verde CRT
+  local RST="\e[0m"
+
+  # 1) Mensaje inicial
+  typeprint "Present day..." 0.05 "$MAG"
   sleep 1
-  echo -e "\e[1;35m\nPresent time...\a\e[0m"
+  typeprint "Present time..." 0.05 "$MAG"
   sleep 1
 
-  # Banner ASCII CodexSyn⚝
-  if command -v figlet >/dev/null 2>&1; then
-    if command -v lolcat >/dev/null 2>&1; then
-      figlet "CodexSyn⚝" | lolcat
-    else
-      figlet "CodexSyn⚝"
-    fi
+  # 2) Banner (figlet + opcional lolcat)
+  figlet_typewriter "CodexSyn" 0.05 "$GRN"
+  sleep 1
+
+   # 3) Fastfetch / Neofetch (si hay)
+  if command -v fastfetch >/dev/null 2>&1; then
+    fastfetch 2>/dev/null
+  elif command -v neofetch >/dev/null 2>&1; then
+    neofetch 2>/dev/null
   fi
 
-  # Frase aleatoria estilo Lain/Wired (magenta)
-  local lain_quotes=(
-    "No hay diferencia entre el mundo y el yo."
-    "Present day... Present time..."
-    "Conéctate a la Red. Escucha."
-    "¿Quién eres tú en el Wired?"
-    "La realidad es solo una negociación."
-  )
-  echo -e "\e[1;35m${lain_quotes[$RANDOM % ${#lain_quotes[@]}]}\e[0m"
-
-  # Mostrar un instante y limpiar
-  sleep 1.5
+  # 4) Limpiar
+  sleep 1
   clear
+
+  # 5) Frase según el día (queda visible)
+  # 1=Lun ... 7=Dom
+  case "$(date +%u)" in
+    1) day_msg="No importa a dónde vayas, todos estamos conectados." ;;
+    2) day_msg="Las personas solo tienen sustancia dentro de los recuerdos de los demás." ;;
+    3) day_msg="Si no eres recordado, nunca exististe." ;;
+    4) day_msg="El Wired podría ser pensamiento." ;;
+    5) day_msg="Solo existo dentro de aquellos que son conscientes de mi existencia." ;;
+    6) day_msg="¿Quién necesita recuerdos? Son solo una carga." ;;
+    7) day_msg="La única diferencia entre el Wired y el mundo real es la cantidad de información." ;;
+  esac
+  typeprint "$day_msg" 0.05 "\e[1;35m"
 }
-# Llamar a la intro al abrir la terminal
+# Ejecutar la intro al abrir la terminal
 intro_codexsyn
