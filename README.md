@@ -1,22 +1,22 @@
-# Dotfiles CodexSyn ⚝
+# Dotfile CodexSyn ⚝
 
 Configuración personalizada de mi terminal en Linux (Bash).
 
 Incluye:
 
-- Intro teatral:  
+- Intro:  
   - `Present day...` → `Present time...` (typewriter magenta)  
   - Banner ASCII **CodexSyn⚝** (verde CRT, con figlet)  
-  - Fastfetch/Neofetch para mostrar info del sistema  
+  - Fastfetch / Neofetch para mostrar info del sistema  
   - Frase de *Serial Experiments Lain* (typewriter magenta) cambia según el dia de la semana
 - Prompt reactivo:  
   - Verde ✅ si el último comando fue exitoso  
   - Rojo ❌ si falló  
-- Separador dinámico antes del prompt (sincronizado con el estado del comando)
+- Separador antes del prompt (sincronizado con el estado del comando)
 
 ---
 
-## 🚀 Restaurar en un sistema nuevo
+## Restaurar en un sistema nuevo
 
 1. Clonar el repo:
    ```bash
@@ -35,7 +35,7 @@ Incluye:
 
 ---
 
-## 🛠 Dependencias recomendadas
+## Dependencias recomendadas
 
 Para aprovechar todas las funciones estéticas:
 
