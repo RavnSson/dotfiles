@@ -2,6 +2,9 @@
 #####  ZSHRC — Umbryne Terminal (clean)
 ##### ===============================
 
+##### ---- Agente SSH ----
+export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
+
 ##### ---- Opciones base ----
 setopt histignorealldups
 setopt sharehistory
