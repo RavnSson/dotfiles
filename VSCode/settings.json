@@ -14,7 +14,6 @@
     "editor.guides.indentation": false,
     "indenticator.width": 0.1,
     "indenticator.color.dark": "rgba(255,255,255,0.1)",
-    
 
     "[python]":{
         "editor.formatOnType": true
@@ -42,19 +41,21 @@
 // Prettier
 
 // Auto Rename Tag
-// Code Runner
-// GitHub Copilot
 // Better Comments
-// Indent Rainbow
-// Indenticator
-// Path Intellisense
-// GitLens
-// Markdown All in One
-// Thunder Client
-// Image preview
-// Live Share
-// Peacock
+// Code Runner
 // CodeSnap
+// GitHub Copilot
+// GitLens
+// Image preview
+// Live Server
+// Live Share
+// Markdown All in One
+// Path Intellisense
+// Peacock
+// Thunder Client
+
 // One Dark Pro
 // Fluent Icons
 // Material Icon Theme
+// Indent Rainbow
+// Indenticator
