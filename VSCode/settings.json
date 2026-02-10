@@ -29,6 +29,7 @@
         "editor.tabCompletion": "onlySnippets",
         "editor.wordBasedSuggestions": "off"
     },
+    "editor.wordWrap": "on"
     
 }
 
@@ -40,6 +41,7 @@
 // Django
 // Prettier
 
+// Error Lens
 // Auto Rename Tag
 // Better Comments
 // Code Runner
